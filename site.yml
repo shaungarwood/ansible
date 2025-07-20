@@ -1,0 +1,11 @@
+---
+- name: Test connectivity to all servers
+  hosts: all
+  gather_facts: yes
+  tasks:
+    - name: Ping all hosts
+      ping:
+    
+    - name: Get system info
+      debug:
+        msg: "{{ inventory_hostname }} is running {{ ansible_distribution }} {{ ansible_distribution_version }}"

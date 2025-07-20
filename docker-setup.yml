@@ -1,0 +1,21 @@
+---
+- name: Install Docker and Docker Compose on all servers
+  hosts: all
+  become: yes
+  roles:
+    - docker
+  
+  post_tasks:
+    - name: Verify Docker installation
+      command: docker --version
+      register: docker_version
+      
+    - name: Verify Docker Compose installation
+      command: docker-compose --version
+      register: compose_version
+      
+    - name: Display versions
+      debug:
+        msg: 
+          - "Docker: {{ docker_version.stdout }}"
+          - "Docker Compose: {{ compose_version.stdout }}"
