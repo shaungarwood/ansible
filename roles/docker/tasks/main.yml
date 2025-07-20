@@ -12,6 +12,7 @@
       - curl
       - gnupg
       - lsb-release
+      - python3-pip
     state: present
   become: yes
 
