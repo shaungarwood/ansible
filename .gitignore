@@ -1,0 +1,26 @@
+# Ansible sensitive files
+*.retry
+*.log
+
+# Host variables with passwords (if not encrypted)
+host_vars/**/vault.yml
+host_vars/**/*vault*
+
+# Temporary files
+.vault_pass
+.ansible_vault_password
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Backup files
+*~
+*.bak
+*.backup
