@@ -1,0 +1,56 @@
+---
+- name: Gather system statistics from all servers
+  hosts: all
+  gather_facts: yes
+  tasks:
+    - name: Get disk usage
+      shell: df -h / | awk 'NR==2 {print $2}'
+      register: disk_total
+      
+    - name: Get GPU information
+      shell: lspci | grep -i vga || echo "No GPU detected"
+      register: gpu_info
+      
+    - name: Get detailed CPU info
+      shell: lscpu | grep -E "^CPU\(s\)|^Thread|^Core"
+      register: cpu_details
+      
+    - name: Create stats summary
+      set_fact:
+        server_stats:
+          hostname: "{{ inventory_hostname }}"
+          total_memory: "{{ (ansible_memtotal_mb / 1024) | round(1) }}GB"
+          total_disk: "{{ disk_total.stdout }}"
+          cpu_cores: "{{ ansible_processor_cores }}"
+          cpu_threads: "{{ ansible_processor_vcpus }}"
+          cpu_model: "{{ ansible_processor[2] }}"
+          gpu: "{{ gpu_info.stdout }}"
+          os: "{{ ansible_distribution }} {{ ansible_distribution_version }}"
+          
+    - name: Display stats
+      debug:
+        var: server_stats
+        
+    - name: Write stats to local file
+      local_action:
+        module: lineinfile
+        path: "./server-stats.md"
+        line: |
+          ## {{ server_stats.hostname }}
+          - **OS**: {{ server_stats.os }}
+          - **Memory**: {{ server_stats.total_memory }}
+          - **Disk**: {{ server_stats.total_disk }}
+          - **CPU**: {{ server_stats.cpu_model }}
+          - **Cores**: {{ server_stats.cpu_cores }}
+          - **Threads**: {{ server_stats.cpu_threads }}
+          - **GPU**: {{ server_stats.gpu }}
+          
+        create: yes
+        
+    - name: Add header to markdown file (run once)
+      local_action:
+        module: lineinfile
+        path: "./server-stats.md"
+        line: "# Server Statistics Report"
+        insertbefore: BOF
+      run_once: true
