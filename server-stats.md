@@ -1,13 +1,4 @@
 # Server Statistics Report
-## brisk-falcon
-- **OS**: Ubuntu 24.04
-- **Memory**: 31.3GB
-- **Disk**: 98G
-- **CPU**: Intel(R) Xeon(R) CPU E5-1620 0 @ 3.60GHz
-- **Cores**: 4
-- **Threads**: 8
-- **GPU**: 03:00.0 VGA compatible controller: NVIDIA Corporation GF119 [GeForce GT 610] (rev a1)
-
 ## greasy-gold
 - **OS**: Ubuntu 22.04
 - **Memory**: 23.4GB
@@ -25,4 +16,13 @@
 - **Cores**: 14
 - **Threads**: 28
 - **GPU**: 02:00.0 VGA compatible controller: NVIDIA Corporation GF119 [NVS 310] (rev a1)
+
+## brisk-falcon
+- **OS**: Ubuntu 24.04
+- **Memory**: 31.3GB
+- **Disk**: 98G
+- **CPU**: Intel(R) Xeon(R) CPU E5-1620 0 @ 3.60GHz
+- **Cores**: 4
+- **Threads**: 8
+- **GPU**: 03:00.0 VGA compatible controller: NVIDIA Corporation GF119 [GeForce GT 610] (rev a1)
 

@@ -16,28 +16,26 @@
     state: present
   become: yes
 
-- name: Add Docker GPG key
-  apt_key:
-    url: https://download.docker.com/linux/ubuntu/gpg
-    state: present
+- name: Remove all Docker repository files
+  shell: |
+    rm -f /etc/apt/sources.list.d/docker*
+    rm -f /etc/apt/keyrings/docker*
+    rm -f /usr/share/keyrings/docker*
   become: yes
+  ignore_errors: yes
 
-- name: Add Docker repository
-  apt_repository:
-    repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
-    state: present
-  become: yes
-
-- name: Install Docker
+- name: Update apt cache after cleanup
   apt:
-    name:
-      - docker-ce
-      - docker-ce-cli
-      - containerd.io
-    state: present
     update_cache: yes
   become: yes
-  notify: start docker
+  ignore_errors: yes
+
+- name: Install Docker using snap (alternative method)
+  snap:
+    name: docker
+  become: yes
+
+
 
 - name: Add user to docker group
   user:
