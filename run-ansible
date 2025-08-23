@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Ansible runner script with dry-run by default
+# Usage: 
+#   ./run-ansible playbook.yml [ansible-playbook options]  # dry-run mode
+#   ./run-ansible --apply playbook.yml [options]           # actual execution
+
+if [[ "$1" == "--apply" ]]; then
+    shift
+    echo "🚀 APPLYING CHANGES (not dry-run)"
+    ANSIBLE_CHECK_MODE=false ansible-playbook "$@"
+else
+    echo "🔍 DRY-RUN MODE (use --apply to execute)"
+    ansible-playbook "$@"
+fi
