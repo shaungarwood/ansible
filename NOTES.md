@@ -148,6 +148,10 @@
 ---
 
 ## TODO Items:
+- [ ] **SSD Hardware Planning** (PRIORITY - do before hostname changes)
+  - [ ] Plan SSD redistribution based on service requirements
+  - [ ] Document which services need SSD performance vs bulk storage
+  - [ ] Create SSD swap procedure using hardware identification (INFRA.md)
 - [ ] Create environment variable inventory per host
 - [ ] Document external storage mount requirements  
 - [ ] Design secrets management strategy (Ansible Vault)
@@ -180,7 +184,7 @@
   - [ ] Map services to ideal host based on capability and role
   - [ ] Consider service dependencies and inter-host communication
   
-- [ ] **Plan hostname migration process**
+- [ ] **Plan hostname migration process** (DEFER until after SSD swaps)
   - [ ] Create hostname change playbooks (overkill-1 → papa-bear, etc.)
   - [ ] Update Ansible inventory with new names
   - [ ] Test hostname changes with baby-bear first
