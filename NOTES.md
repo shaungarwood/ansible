@@ -170,3 +170,77 @@
 - [ ] Investigate brisk-falcon intended usage and potential services
 - [ ] Document current backup/restore procedures for each service
 - [ ] Create disaster recovery runbook for complete stack recreation
+
+## SERVICE MIGRATION & REORGANIZATION PLAN
+
+### Key Constraints:
+- Server hardware specs and names (papa-bear, mama-bear, baby-bear) are FIXED
+- Services will be moved logically and physically between hosts
+- Need to design optimal service distribution based on resource requirements
+
+### Hostname Migration Plan:
+- **overkill-1** → **papa-bear** (31.3GB RAM, 28 threads, 915GB storage)
+- **greasy-gold** → **mama-bear** (23.4GB RAM, 12 threads, 98GB storage)  
+- **brisk-falcon** → **baby-bear** (31.3GB RAM, 8 threads, 98GB storage)
+
+### Service Migration TODO Items:
+- [ ] **Design optimal service distribution strategy**
+  - [ ] Analyze resource requirements per service (CPU, RAM, disk, network)
+  - [ ] Map services to ideal host based on capability and role
+  - [ ] Consider service dependencies and inter-host communication
+  
+- [ ] **Plan hostname migration process**
+  - [ ] Create hostname change playbooks (overkill-1 → papa-bear, etc.)
+  - [ ] Update Ansible inventory with new names
+  - [ ] Test hostname changes with baby-bear first
+  
+- [ ] **Service Migration Planning**
+  - [ ] Document current service-to-host mapping
+  - [ ] Design target service-to-host mapping  
+  - [ ] Plan migration order (dependencies first)
+  - [ ] Create service backup/restore procedures for migration
+  - [ ] Design zero-downtime migration strategy for critical services
+  
+- [ ] **Infrastructure Redesign Considerations**
+  - [ ] Consolidate duplicate services (mealie, ddns-updater, portainer)?
+  - [ ] Optimize resource utilization across all three hosts
+  - [ ] Plan baby-bear production role and workload assignment
+  - [ ] Design centralized vs distributed service architecture
+  - [ ] Network optimization for inter-host service communication
+
+### Strategic Questions for Service Distribution:
+- Should papa-bear focus purely on compute-heavy tasks (transcoding, AI, crypto)?
+- Should mama-bear become the central coordination hub (reverse proxy, monitoring, notifications)?
+- What production role should baby-bear take (backup services, development, specialized workload)?
+- Which services need to stay together vs can be distributed?
+
+## PROPOSED SERVICE DISTRIBUTION STRATEGY
+
+### **papa-bear** (28 threads, 915GB storage) - Heavy Compute & Storage Hub
+**Role**: High-performance computing and bulk storage
+**Proposed Services**:
+- Media processing (transcoding, conversion)  
+- Cryptocurrency mining/nodes (monero)
+- Background automation (radarr/sonarr heavy lifting)
+- Bulk storage services
+- AI/ML workloads (future)
+- Database services requiring high I/O
+
+### **mama-bear** (12 threads, balanced) - User Experience & Coordination Hub  
+**Role**: User-facing services and system coordination
+**Proposed Services**:
+- Plex media server (user-facing)
+- Web UIs and dashboards (dashy, portainer)
+- Reverse proxy coordination (SWAG)
+- Real-time services (gaming, notifications)
+- Monitoring and alerting (uptime-kuma, changedetection)
+- Communication services (signal-cli, ntfy)
+
+### **baby-bear** (8 threads, available capacity) - Development & Redundancy
+**Role**: Development, testing, and service redundancy  
+**Proposed Services**:
+- Development/testing environments
+- Backup instances of critical services
+- Edge services and lightweight workloads
+- Specialized applications
+- Disaster recovery staging
