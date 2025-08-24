@@ -1,5 +1,33 @@
 # Infrastructure Analysis
 
+## Server Hardware Identification
+*Use these identifiers to distinguish servers during hardware swaps/changes*
+
+### **papa-bear** (overkill-1)
+- **IP Address**: `192.168.1.100`
+- **MAC Address**: `5a:16:21:3a:45:18` (ens1)
+- **CPU Model**: Intel(R) Xeon(R) CPU E5-2697 v3 @ 2.60GHz (14 cores/28 threads)
+- **Network Interface**: `ens1`
+
+### **mama-bear** (greasy-gold)
+- **IP Address**: `192.168.1.149` 
+- **MAC Address**: `62:a6:e5:80:6a:c4` (enp0s25)
+- **CPU Model**: Intel(R) Xeon(R) CPU E5-1650 v2 @ 3.50GHz (6 cores/12 threads)
+- **Network Interface**: `enp0s25`
+
+### **baby-bear** (brisk-falcon)  
+- **IP Address**: `192.168.1.135`
+- **MAC Address**: `86:43:76:1a:a9:2e` (enp7s0)
+- **CPU Model**: Intel(R) Xeon(R) CPU E5-1620 0 @ 3.60GHz (4 cores/8 threads)
+- **Network Interface**: `enp7s0`
+
+### **Network Configuration**:
+- **Gateway**: 192.168.1.1 (all servers)
+- **Network**: 192.168.1.0/24
+- **DHCP**: All servers using DHCP with stable IP assignments
+
+---
+
 ## Server Hardware Specifications
 
 ### **papa-bear** (overkill-1)
