@@ -76,16 +76,7 @@
 - **brisk-falcon**: Available for expansion/testing
 
 ## Infrastructure Insights
-
-### Storage Architecture:
-- **overkill-1**: Large 915GB storage, uses `/tmp/` and `/media/` mount points
-- **greasy-gold**: References `/forest2/Media/` - external storage mount
-- Suggests shared or distributed storage across the network
-
-### Network Architecture:
-- Services use different port allocations per host to avoid conflicts
-- Both production hosts run SWAG reverse proxies
-- Suggests domain-based routing or subdomain strategy
+*See INFRA.md for detailed hardware specifications, storage analysis, and performance characteristics*
 
 ### Security Patterns:
 - VPN integration for torrent traffic (overkill-1)
@@ -138,7 +129,7 @@
 - Compose preserves current architecture, native tasks offer more control
 
 ### Volume Management:
-- Need to identify external mount points (/forest2/, /media/)
+- External mount points documented in INFRA.md
 - Directory creation and permission management required
 - Backup implications for persistent data
 
@@ -215,32 +206,31 @@
 - Which services need to stay together vs can be distributed?
 
 ## PROPOSED SERVICE DISTRIBUTION STRATEGY
+*Updated strategy based on storage analysis in INFRA.md*
 
-### **papa-bear** (28 threads, 915GB storage) - Heavy Compute & Storage Hub
-**Role**: High-performance computing and bulk storage
+### **papa-bear** (28 threads, SSD primary) - High-Performance Computing Hub
+**Role**: Database services and compute-intensive workloads
 **Proposed Services**:
-- Media processing (transcoding, conversion)  
-- Cryptocurrency mining/nodes (monero)
-- Background automation (radarr/sonarr heavy lifting)
-- Bulk storage services
-- AI/ML workloads (future)
-- Database services requiring high I/O
+- Database services (PostgreSQL, Redis, etc.) - leverage SSD performance
+- CPU-intensive processing (transcoding, AI/ML, crypto mining)
+- Docker containers requiring fast I/O and frequent writes
+- Background automation with heavy compute requirements
 
-### **mama-bear** (12 threads, balanced) - User Experience & Coordination Hub  
-**Role**: User-facing services and system coordination
+### **mama-bear** (12 threads, HDD, STORAGE CRITICAL) - Coordination Hub  
+**Role**: Lightweight coordination services (POST-CLEANUP)
+**URGENT**: Storage cleanup required (97% full)
 **Proposed Services**:
-- Plex media server (user-facing)
-- Web UIs and dashboards (dashy, portainer)
-- Reverse proxy coordination (SWAG)
-- Real-time services (gaming, notifications)
-- Monitoring and alerting (uptime-kuma, changedetection)
-- Communication services (signal-cli, ntfy)
+- Reverse proxy coordination (SWAG) - minimal footprint
+- Lightweight web interfaces and dashboards  
+- Monitoring coordination (small footprint services)
+- User-facing services with minimal storage requirements
 
-### **baby-bear** (8 threads, available capacity) - Development & Redundancy
-**Role**: Development, testing, and service redundancy  
+### **baby-bear** (8 threads, SSD + 3.6TB HDD) - Storage Powerhouse & Development
+**Role**: Bulk storage, development, and redundancy hub
+**Major Opportunity**: Massive unused storage capacity
 **Proposed Services**:
-- Development/testing environments
-- Backup instances of critical services
-- Edge services and lightweight workloads
-- Specialized applications
-- Disaster recovery staging
+- Bulk storage services (media libraries, backups)
+- Development and testing environments
+- Service redundancy and failover instances
+- Archive services and long-term storage
+- Media processing with large storage requirements
