@@ -186,6 +186,82 @@
 
 ---
 
+## HOSTNAME MIGRATION PLAN
+*Complete procedure for renaming servers from current names to bear theme*
+
+### **Hostname Mapping:**
+- **overkill-1** → **papa-bear** (most powerful: 28 threads, 915GB SSD)
+- **greasy-gold** → **mama-bear** (nurturing: serves media, home automation)  
+- **brisk-falcon** → **baby-bear** (potential: available for growth)
+
+### **Hardware Identification (Use During Migration):**
+- **papa-bear**: `192.168.1.100`, MAC `5a:16:21:3a:45:18`, E5-2697 v3 CPU
+- **mama-bear**: `192.168.1.149`, MAC `62:a6:e5:80:6a:c4`, E5-1650 v2 CPU
+- **baby-bear**: `192.168.1.135`, MAC `86:43:76:1a:a9:2e`, E5-1620 CPU
+
+### **Migration Procedure:**
+
+#### **Phase 1: Pre-Migration Checks**
+1. **Verify service impact**: Most Docker services hostname-agnostic (✅ VERIFIED)
+2. **Check DDNS configs**: Domain management tied to containers, not hostnames (✅ SAFE)
+3. **SSL certificates**: SWAG uses catch-all server names (✅ SAFE)
+4. **Network storage**: Uses IP addresses, not hostnames (✅ SAFE)
+
+#### **Phase 2: Ansible Preparation**
+1. **Create hostname change playbook**:
+   ```yaml
+   - name: Change hostname
+     hostname:
+       name: "{{ new_hostname }}"
+   - name: Update /etc/hosts
+     lineinfile:
+       path: /etc/hosts
+       regexp: '^127\.0\.1\.1'
+       line: "127.0.1.1 {{ new_hostname }}"
+   ```
+
+2. **Update inventory.yml**:
+   ```yaml
+   servers:
+     hosts:
+       papa-bear:
+         ansible_host: papa-bear
+       mama-bear:
+         ansible_host: mama-bear  
+       baby-bear:
+         ansible_host: baby-bear
+   ```
+
+#### **Phase 3: Migration Execution**
+1. **Test with baby-bear first** (safest, minimal services)
+2. **Execute hostname change playbook per host**
+3. **Reboot each host** (cleanest approach)
+4. **Verify services restart correctly**
+5. **Update local SSH config/known_hosts**
+
+#### **Phase 4: Verification**
+1. **Test Ansible connectivity** with new names
+2. **Verify all Docker services running**
+3. **Check DDNS functionality** 
+4. **Confirm SSL certificates working**
+5. **Update documentation references**
+
+### **Rollback Plan:**
+- **Revert /etc/hostname** and **/etc/hosts** 
+- **Reboot affected host**
+- **Restore original inventory.yml**
+- **Docker services unaffected** by rollback
+
+### **Why Safe:**
+- ✅ **Docker networking**: Uses internal container names
+- ✅ **Port mappings**: Bound to interfaces, not hostnames  
+- ✅ **Volume mounts**: Use local paths
+- ✅ **Network storage**: Uses IP addresses
+- ✅ **SSL certificates**: SWAG uses wildcard/catch-all
+- ✅ **DDNS**: Container-based, hostname-independent
+
+---
+
 ## TODO Items:
 - [ ] **SSD Hardware Planning** (INDEPENDENT - can do anytime)
   - [ ] Plan SSD redistribution based on service requirements
@@ -227,6 +303,7 @@
   - [ ] Create hostname change playbooks (overkill-1 → papa-bear, etc.)
   - [ ] Update Ansible inventory with new names
   - [ ] Test hostname changes with baby-bear first
+  - [ ] *See HOSTNAME MIGRATION PLAN section for complete procedure*
   
 - [ ] **Service Migration Planning**
   - [ ] Document current service-to-host mapping
