@@ -66,7 +66,9 @@
 
 ### Common Services Across Hosts:
 - **SWAG (NGINX)**: Both overkill-1 and greasy-gold run reverse proxies
-- **DDNS-Updater**: Dynamic DNS management on multiple hosts  
+- **DDNS Services**: Domain-specific DNS management:
+  - **`ddns-pancakefight-com`**: Updates pancakefight.com and www.pancakefight.com (papa-bear)
+  - **`ddns-duck-bar`**: Updates duck.bar and ntfy.duck.bar (mama-bear)
 - **Portainer**: Docker management UIs (different ports)
 - **Mealie**: Recipe management (different ports per host)
 
@@ -137,6 +139,43 @@
 - VPN container dependencies for torrent stack
 - Database containers for some services
 - Inter-service communication requirements
+
+## ROLE-BASED ARCHITECTURE PLAN
+
+### **Discovered Domain Management:**
+- **pancakefight.com** + **www.pancakefight.com** managed by papa-bear
+- **duck.bar** + **ntfy.duck.bar** managed by mama-bear
+- Both use Namecheap as DNS provider
+
+### **Proposed Role Structure:**
+
+#### **Media Roles:**
+- **`plex-server`** - Plex media server (mama-bear)
+- **`media-acquisition`** - Combined media stack (papa-bear):
+  - Transmission + VPN downloader
+  - Jackett torrent indexer  
+  - Radarr/Sonarr automation
+- **`media-analytics`** - Tautulli Plex monitoring
+
+#### **Infrastructure Roles:**
+- **`reverse-proxy`** - SWAG/NGINX (multiple hosts, different configs)
+- **`ddns-pancakefight-com`** - Updates pancakefight.com domains (papa-bear)
+- **`ddns-duck-bar`** - Updates duck.bar domains (mama-bear)
+- **`container-management`** - Portainer (per host or centralized)
+
+#### **Service Roles:**
+- **`monero-node`** - Cryptocurrency node
+- **`recipe-manager`** - Mealie instances
+- **`notification-service`** - ntfy push notifications
+- **`uptime-monitoring`** - Uptime-kuma
+- **`change-detection`** - Website monitoring
+- **`dashboard`** - Dashy home dashboard
+- **`minecraft-server`** - Gaming server
+
+#### **Utility Roles:**
+- **`backup-service`** - Automated backups
+- **`storage-manager`** - Volume/directory management
+- **`security-baseline`** - Common security configs
 
 ## Next Steps Priority:
 1. Document environment variables and secrets per service
