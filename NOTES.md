@@ -177,6 +177,67 @@
 - **`storage-manager`** - Volume/directory management
 - **`security-baseline`** - Common security configs
 
+## CURRENT SERVICE → ROLE MAPPING
+
+### **papa-bear (overkill-1) Current Services:**
+- **transmission-openvpn** → `media-acquisition` role ✅
+- **jackett** → `media-acquisition` role ✅  
+- **radarr** → `media-acquisition` role ✅
+- **sonarr** → `media-acquisition` role ✅
+- **tautulli** → `media-analytics` role ✅
+- **swag** → `reverse-proxy` role ✅
+- **ddns-updater** → `ddns-pancakefight-com` role ✅
+- **mealie** → `recipe-manager` role ✅
+- **tubesync** → *NEW ROLE NEEDED:* `youtube-sync` 
+- **portainer** → `container-management` role ✅
+- **monero** → `monero-node` role ✅
+
+### **mama-bear (greasy-gold) Current Services:**
+- **plex** → `plex-server` role ✅
+- **minecraft** → `minecraft-server` role ✅
+- **swag** → `reverse-proxy` role ✅
+- **ddns-updater** → `ddns-duck-bar` role ✅
+- **mealie** → `recipe-manager` role ✅
+- **changedetection** → `change-detection` role ✅
+- **portainer** → `container-management` role ✅
+- **dashy** → `dashboard` role ✅
+- **ntfy** → `notification-service` role ✅
+- **uptime-kuma** → `uptime-monitoring` role ✅
+- **signal-cli** → *NEW ROLE NEEDED:* `signal-bridge`
+- **watchyourlan** → *NEW ROLE NEEDED:* `network-monitoring`
+
+### **baby-bear (brisk-falcon) Current Services:**
+- *No active production services* → Available for new role assignments
+
+## ROLE MAPPING STATUS
+
+### **✅ ROLES WITH CLEAR MAPPINGS:**
+- `media-acquisition` (4 services on papa-bear)
+- `plex-server` (mama-bear)  
+- `reverse-proxy` (both papa-bear and mama-bear)
+- `ddns-pancakefight-com` (papa-bear)
+- `ddns-duck-bar` (mama-bear)
+- `container-management` (both hosts)
+- `monero-node` (papa-bear)
+- `recipe-manager` (both hosts - duplicate service)
+
+### **🆕 NEW ROLES DISCOVERED:**
+- `youtube-sync` (tubesync on papa-bear)
+- `signal-bridge` (signal-cli on mama-bear)  
+- `network-monitoring` (watchyourlan on mama-bear)
+
+### **🤔 CONSOLIDATION DECISIONS NEEDED:**
+- **Mealie instances**: Keep separate or consolidate to one host?
+- **Portainer instances**: Centralize or keep distributed?  
+- **SWAG instances**: Keep both or designate primary/backup?
+
+### **📋 NEXT STEPS:**
+1. **Define new roles** for tubesync, signal-cli, watchyourlan
+2. **Decide consolidation strategy** for duplicate services
+3. **Design baby-bear role assignments** (currently unused)
+4. **Create role variable templates** for each service type
+5. **Plan service migration** from current to optimized distribution
+
 ## Next Steps Priority:
 1. Document environment variables and secrets per service
 2. Map all volume dependencies and external storage
