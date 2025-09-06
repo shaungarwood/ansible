@@ -1,0 +1,73 @@
+---
+# Tasks for youtube-sync role (tubesync)
+
+- name: Backup existing container if requested
+  include_tasks: backup.yml
+  when: 
+    - youtube_sync_backup_before_replace | bool
+    - youtube_sync_enabled | bool
+
+- name: Ensure youtube-sync is enabled
+  when: youtube_sync_enabled | bool
+  block:
+    - name: Create tubesync directories
+      file:
+        path: "{{ item }}"
+        state: directory
+        owner: "{{ youtube_sync_uid }}"
+        group: "{{ youtube_sync_gid }}"
+        mode: '0755'
+      loop:
+        - "{{ youtube_sync_config_path }}"
+        - "{{ youtube_sync_downloads_path }}"
+
+    - name: Pull latest tubesync image
+      docker_image:
+        name: "{{ youtube_sync_image }}"
+        source: pull
+        force_source: "{{ youtube_sync_pull_image }}"
+      when: youtube_sync_pull_image | bool
+
+    - name: Deploy tubesync container
+      docker_container:
+        name: "{{ youtube_sync_container_name }}"
+        image: "{{ youtube_sync_image }}"
+        state: started
+        restart_policy: "{{ youtube_sync_restart_policy }}"
+        network_mode: "{{ youtube_sync_network_mode }}"
+        ports: "{{ youtube_sync_ports }}"
+        volumes:
+          - "{{ youtube_sync_config_path }}:/config:rw"
+          - "{{ youtube_sync_downloads_path }}:/downloads:rw"
+        env: "{{ youtube_sync_env }}"
+        memory: "{{ youtube_sync_memory_limit | default(omit) }}"
+        cpus: "{{ youtube_sync_cpu_limit | default(omit) }}"
+        recreate: "{{ youtube_sync_recreate | default(false) }}"
+        pull: "{{ youtube_sync_pull_image }}"
+      register: youtube_sync_container
+
+    - name: Wait for tubesync to be healthy
+      uri:
+        url: "http://localhost:{{ youtube_sync_ports[0].split(':')[0] }}/"
+        status_code: [200, 302]
+      register: result
+      until: result.status in [200, 302]
+      retries: 30
+      delay: 2
+      when: 
+        - youtube_sync_container.changed
+        - not ansible_check_mode
+
+- name: Ensure youtube-sync is disabled
+  when: not youtube_sync_enabled | bool
+  block:
+    - name: Stop and remove tubesync container
+      docker_container:
+        name: "{{ youtube_sync_container_name }}"
+        state: absent
+    
+    - name: Optionally remove data
+      file:
+        path: "{{ youtube_sync_base_path }}"
+        state: absent
+      when: youtube_sync_remove_data_on_disable | default(false) | bool

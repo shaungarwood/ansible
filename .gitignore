@@ -1,6 +1,8 @@
 # Ansible sensitive files
 *.retry
 *.log
+logs/
+test/logs/
 
 # Host variables with passwords (if not encrypted)
 host_vars/**/vault.yml

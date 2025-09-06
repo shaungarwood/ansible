@@ -1,0 +1,48 @@
+---
+# Test playbook for migrating services between servers
+# This demonstrates how easy it is to move services with our portable roles
+
+- name: Test Service Migration - YouTube Sync Example
+  hosts: all
+  become: yes
+  
+  tasks:
+    - name: Display migration plan
+      debug:
+        msg: |
+          Service Migration Test Plan:
+          1. Current: tubesync on overkill-1 (papa-bear)
+          2. Target: Move to brisk-falcon (baby-bear)
+          
+          Steps:
+          - Disable on source server
+          - Copy data to target server
+          - Enable on target server
+      run_once: true
+
+    # Step 1: Ensure service is disabled on old host
+    - name: Disable youtube-sync on papa-bear
+      include_role:
+        name: youtube-sync
+      vars:
+        youtube_sync_enabled: false
+      when: inventory_hostname == "overkill-1"
+
+    # Step 2: Enable service on new host
+    - name: Enable youtube-sync on baby-bear
+      include_role:
+        name: youtube-sync
+      vars:
+        youtube_sync_enabled: true
+      when: inventory_hostname == "brisk-falcon"
+
+    # Step 3: Show migration status
+    - name: Check migration status
+      docker_container_info:
+        name: tubesync
+      register: container_status
+      ignore_errors: yes
+
+    - name: Display container status per host
+      debug:
+        msg: "{{ inventory_hostname }}: Container {{ 'exists' if container_status.exists else 'not found' }}"

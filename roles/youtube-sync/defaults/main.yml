@@ -1,0 +1,33 @@
+---
+# Default variables for youtube-sync role (tubesync)
+youtube_sync_enabled: true
+youtube_sync_container_name: tubesync
+youtube_sync_image: "ghcr.io/meeb/tubesync:latest"
+youtube_sync_restart_policy: unless-stopped
+youtube_sync_pull_image: true
+
+# Network configuration
+youtube_sync_network_mode: bridge
+youtube_sync_ports:
+  - "4848:4848"
+
+# Base paths - override in host_vars for different servers
+youtube_sync_base_path: "{{ containers_base_path }}/tubesync"
+youtube_sync_config_path: "{{ youtube_sync_base_path }}/config"
+youtube_sync_downloads_path: "{{ youtube_sync_base_path }}/downloads"
+
+# User/Group IDs - inherit from common or override
+youtube_sync_uid: "{{ docker_uid }}"
+youtube_sync_gid: "{{ docker_gid }}"
+
+# Environment variables - merge common with service-specific
+youtube_sync_env: "{{ docker_common_env | combine(youtube_sync_extra_env | default({})) }}"
+youtube_sync_extra_env: {}
+
+# Resource limits (optional but recommended)
+youtube_sync_memory_limit: "512M"
+youtube_sync_cpu_limit: "1.0"
+
+# Backup settings
+youtube_sync_backup_before_replace: false
+youtube_sync_backup_path: "/tmp/tubesync-backup-{{ ansible_date_time.epoch }}"

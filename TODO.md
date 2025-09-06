@@ -121,12 +121,38 @@
 - mama-bear: 192.168.1.149, MAC 62:a6:e5:80:6a:c4, E5-1650 v2 CPU  
 - baby-bear: 192.168.1.135, MAC 86:43:76:1a:a9:2e, E5-1620 CPU
 
+## CURRENT SESSION PROGRESS
+
+### ✅ COMPLETED
+- **3 new roles created**: youtube-sync, signal-bridge, network-monitoring
+- **Common environment variables**: Created `group_vars/all/docker-common.yml` for TZ, PUID, PGID, TERM
+- **Portainer backup analysis**: Documented all Portainer-managed services
+- **YouTube-sync role testing**: Dry-run successful, ready for deployment
+
+### 🔧 PORTAINER FINDINGS (Critical Issues Found)
+- **tubesync** (papa-bear): Named volumes only - data at risk! Ready to migrate.
+- **watchyourlan** (mama-bear): WiFi interface `wlx482254ddc065` not `eth0` - needs role update
+- **mealie** (mama-bear): **SECURITY ISSUE** - SMTP password exposed in plain text
+- **Timezone inconsistency**: Services use `America/Denver`, our common config uses `America/Chicago`
+
+### 🚨 CRITICAL INFRASTRUCTURE ISSUES
+1. **Hostname confusion**: Constantly confusing greasy-gold vs mama-bear names
+2. **Storage crisis**: mama-bear 97% full (system failure risk) 
+3. **No centralized container tracking**: Need better inventory system
+
+## IMMEDIATE NEXT ACTIONS
+1. **Deploy youtube-sync role** - Replace Portainer-managed container with Ansible version
+2. **Fix network-monitoring role** - Update interface name to `wlx482254ddc065`
+3. **Create mealie role** - Handle SMTP credentials securely with Ansible Vault
+4. **Change server hostnames** - URGENT: greasy-gold → mama-bear, etc.
+5. **Create infrastructure documentation system** - AGENTS.md for physical/logical inventory
+
 ## NEXT SESSION PRIORITIES
-1. Define the 3 new roles (youtube-sync, signal-bridge, network-monitoring)
-2. Make consolidation decisions for duplicate services
-3. Plan baby-bear production role assignments
-4. Create first role implementation (suggest: media-acquisition)
-5. Address mama-bear storage crisis
+1. Test service migration between servers (youtube-sync papa-bear → baby-bear)
+2. Address mama-bear storage crisis (97% full - critical!)
+3. Create consolidated inventory tracking system
+4. Make consolidation decisions for duplicate services
+5. Plan baby-bear production role assignments
 
 ## FILES TO REFERENCE
 - NOTES.md: Complete planning, TODO lists, hostname migration plan

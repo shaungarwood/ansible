@@ -1,0 +1,16 @@
+---
+# Playbook to match CURRENT tubesync state (for achieving "no changes" in dry-run)
+- name: Manage YouTube Sync (TubeSync) - Current State
+  hosts: overkill-1
+  become: yes
+  
+  tasks:
+    - name: Check current tubesync container
+      docker_container:
+        name: tubesync
+        image: "ghcr.io/meeb/tubesync:latest"
+        state: started
+        restart_policy: unless-stopped
+        ports:
+          - "4848:4848"
+        # No volumes, no env vars - matches what's running now

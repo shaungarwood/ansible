@@ -1,0 +1,34 @@
+---
+# Common Docker container environment variables
+# These are shared across all containers unless overridden
+
+# Timezone configuration
+timezone: "America/Chicago"
+
+# User/Group IDs for container processes
+docker_uid: "1000"
+docker_gid: "1000"
+
+# Common environment variables for all containers
+docker_common_env:
+  TZ: "{{ timezone }}"
+  PUID: "{{ docker_uid }}"
+  PGID: "{{ docker_gid }}"
+  TERM: "xterm"
+
+# Base path for all container data
+# Can be overridden per host if different storage is needed
+containers_base_path: "/opt/containers"
+
+# Common resource limits (can be overridden per service)
+default_memory_limit: "512M"
+default_cpu_limit: "1.0"
+
+# Network settings
+default_network_mode: "bridge"
+
+# Restart policy
+default_restart_policy: "unless-stopped"
+
+# Image pull policy
+default_pull_image: true

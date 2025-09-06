@@ -1,0 +1,29 @@
+---
+# Backup tasks for existing tubesync data before migration
+
+- name: Check if tubesync container exists
+  docker_container_info:
+    name: "{{ youtube_sync_container_name }}"
+  register: existing_container
+
+- name: Backup existing container data if no volumes are mounted
+  when: 
+    - existing_container.exists
+    - existing_container.container.HostConfig.Binds is none or existing_container.container.HostConfig.Binds | length == 0
+  block:
+    - name: Create backup directory
+      file:
+        path: "{{ youtube_sync_backup_path | default('/tmp/tubesync-backup') }}"
+        state: directory
+        mode: '0755'
+
+    - name: Export data from container
+      shell: |
+        docker cp {{ youtube_sync_container_name }}:/config {{ youtube_sync_backup_path }}/config
+        docker cp {{ youtube_sync_container_name }}:/downloads {{ youtube_sync_backup_path }}/downloads
+      args:
+        creates: "{{ youtube_sync_backup_path }}/config"
+      
+    - name: Display backup location
+      debug:
+        msg: "Tubesync data backed up to {{ youtube_sync_backup_path }}. You can restore it to {{ youtube_sync_config_path }} and {{ youtube_sync_downloads_path }}"

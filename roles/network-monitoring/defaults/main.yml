@@ -1,0 +1,31 @@
+---
+# Default variables for network-monitoring role (WatchYourLAN)
+network_monitoring_enabled: true
+network_monitoring_container_name: watchyourlan
+network_monitoring_image: "aceberg/watchyourlan:latest"
+network_monitoring_restart_policy: "{{ default_restart_policy }}"
+network_monitoring_pull_image: "{{ default_pull_image }}"
+
+# Network configuration
+network_monitoring_network_mode: host  # Needs host network to scan LAN
+network_monitoring_ports:
+  - "8840:8840"  # Web UI port
+
+# Base paths - portable between servers
+network_monitoring_base_path: "{{ containers_base_path }}/watchyourlan"
+network_monitoring_data_path: "{{ network_monitoring_base_path }}/data"
+
+# Environment variables - merge common with service-specific
+network_monitoring_env: "{{ docker_common_env | combine(network_monitoring_extra_env | default({})) }}"
+network_monitoring_extra_env:
+  IFACES: "eth0"  # Network interface to monitor
+  TIMEOUT: "120"  # Scan timeout in seconds
+  SHOUTRRR_URL: ""  # Optional notification URL
+
+# Resource limits
+network_monitoring_memory_limit: "256M"
+network_monitoring_cpu_limit: "0.5"
+
+# Scan settings
+network_monitoring_scan_interval: "300"  # Seconds between scans
+network_monitoring_subnet: "192.168.1.0/24"  # Network to scan

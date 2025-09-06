@@ -1,0 +1,18 @@
+---
+# Network Monitoring configuration for greasy-gold (mama-bear)
+
+network_monitoring_enabled: true
+
+# Network settings
+network_monitoring_network_mode: host  # Needs host network for LAN scanning
+network_monitoring_subnet: "192.168.1.0/24"
+
+# Resource limits for mama-bear
+network_monitoring_memory_limit: "256M"
+network_monitoring_cpu_limit: "0.5"
+
+# Interface to monitor (adjust if different)
+network_monitoring_extra_env:
+  IFACES: "eth0"  # or eno1, enp0s3, etc - check with 'ip a' on the server
+  TIMEOUT: "120"
+  SHOUTRRR_URL: ""  # Can add ntfy URL here if desired

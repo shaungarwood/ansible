@@ -1,0 +1,14 @@
+services:
+  watchyourlan:
+    image: aceberg/watchyourlan:v2
+    ports:
+      - 8840:8840
+    volumes:
+      - watchyourlan-data:/data/WatchYourLAN
+    env_file:
+      - stack.env
+    network_mode: host
+    restart: always
+
+volumes:
+  watchyourlan-data:

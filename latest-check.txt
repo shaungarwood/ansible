@@ -1,0 +1,22 @@
+
+PLAY [Deploy YouTube Sync (TubeSync) service] **********************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [overkill-1]
+
+TASK [docker : Update apt cache] ***********************************************
+changed: [overkill-1]
+
+TASK [docker : Install required packages] **************************************
+ok: [overkill-1]
+
+TASK [docker : Remove all Docker repository files] *****************************
+skipping: [overkill-1]
+
+TASK [docker : Update apt cache after cleanup] *********************************
+changed: [overkill-1]
+
+TASK [docker : Install Docker using snap (alternative method)] *****************
+changed: [overkill-1]
+
+TASK [docker : Add user to docker group] ***************************************

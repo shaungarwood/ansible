@@ -1,0 +1,65 @@
+---
+# Tasks for network-monitoring role (WatchYourLAN)
+
+- name: Ensure network-monitoring is enabled
+  when: network_monitoring_enabled | bool
+  block:
+    - name: Create watchyourlan directories
+      file:
+        path: "{{ item }}"
+        state: directory
+        owner: "{{ docker_uid }}"
+        group: "{{ docker_gid }}"
+        mode: '0755'
+      loop:
+        - "{{ network_monitoring_data_path }}"
+
+    - name: Pull latest watchyourlan image
+      docker_image:
+        name: "{{ network_monitoring_image }}"
+        source: pull
+        force_source: "{{ network_monitoring_pull_image }}"
+      when: network_monitoring_pull_image | bool
+
+    - name: Deploy watchyourlan container
+      docker_container:
+        name: "{{ network_monitoring_container_name }}"
+        image: "{{ network_monitoring_image }}"
+        state: started
+        restart_policy: "{{ network_monitoring_restart_policy }}"
+        network_mode: "{{ network_monitoring_network_mode }}"
+        ports: "{{ network_monitoring_ports if network_monitoring_network_mode != 'host' else omit }}"
+        volumes:
+          - "{{ network_monitoring_data_path }}:/data:rw"
+        env: "{{ network_monitoring_env }}"
+        memory: "{{ network_monitoring_memory_limit | default(omit) }}"
+        cpus: "{{ network_monitoring_cpu_limit | default(omit) }}"
+        recreate: "{{ network_monitoring_recreate | default(false) }}"
+        pull: "{{ network_monitoring_pull_image }}"
+        capabilities:
+          - NET_RAW
+      register: network_monitoring_container
+
+    - name: Wait for watchyourlan web UI to be available
+      uri:
+        url: "http://localhost:8840/"
+        status_code: 200
+      register: result
+      until: result.status == 200
+      retries: 30
+      delay: 2
+      when: network_monitoring_container.changed
+
+- name: Ensure network-monitoring is disabled
+  when: not network_monitoring_enabled | bool
+  block:
+    - name: Stop and remove watchyourlan container
+      docker_container:
+        name: "{{ network_monitoring_container_name }}"
+        state: absent
+    
+    - name: Optionally remove data
+      file:
+        path: "{{ network_monitoring_base_path }}"
+        state: absent
+      when: network_monitoring_remove_data_on_disable | default(false) | bool

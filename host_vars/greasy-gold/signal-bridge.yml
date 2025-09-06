@@ -1,0 +1,15 @@
+---
+# Signal Bridge configuration for greasy-gold (mama-bear)
+
+signal_bridge_enabled: true
+
+# Port configuration
+signal_bridge_ports:
+  - "8080:8080"
+
+# Resource limits for mama-bear
+signal_bridge_memory_limit: "512M"
+signal_bridge_cpu_limit: "0.5"
+
+# Signal-specific configuration
+signal_bridge_mode: "json-rpc"

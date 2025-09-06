@@ -1,0 +1,15 @@
+---
+# Match current tubesync state (no volumes, minimal config)
+# This allows ansible to recognize the existing container as "correct"
+
+- name: Deploy tubesync container (current state - no volumes)
+  docker_container:
+    name: "{{ youtube_sync_container_name }}"
+    image: "{{ youtube_sync_image }}"
+    state: started
+    restart_policy: "{{ youtube_sync_restart_policy }}"
+    network_mode: "default"  # Matches current tubesync_default
+    ports:
+      - "4848:4848"
+    # No volumes mounted (matches current state)
+    # No extra env vars (matches current state)

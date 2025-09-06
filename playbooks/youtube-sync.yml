@@ -1,0 +1,7 @@
+---
+- name: Deploy YouTube Sync (TubeSync) service
+  hosts: overkill-1  # papa-bear
+  become: yes
+  
+  roles:
+    - youtube-sync

@@ -1,0 +1,63 @@
+---
+# Tasks for signal-bridge role (signal-cli REST API)
+
+- name: Ensure signal-bridge is enabled
+  when: signal_bridge_enabled | bool
+  block:
+    - name: Create signal-bridge directories
+      file:
+        path: "{{ item }}"
+        state: directory
+        owner: "1000"
+        group: "1000"
+        mode: '0755'
+      loop:
+        - "{{ signal_bridge_data_path }}"
+
+    - name: Pull latest signal-cli-rest-api image
+      docker_image:
+        name: "{{ signal_bridge_image }}"
+        source: pull
+        force_source: "{{ signal_bridge_pull_image }}"
+      when: signal_bridge_pull_image | bool
+
+    - name: Deploy signal-bridge container
+      docker_container:
+        name: "{{ signal_bridge_container_name }}"
+        image: "{{ signal_bridge_image }}"
+        state: started
+        restart_policy: "{{ signal_bridge_restart_policy }}"
+        network_mode: "{{ signal_bridge_network_mode }}"
+        ports: "{{ signal_bridge_ports }}"
+        volumes:
+          - "{{ signal_bridge_data_path }}:/home/.local/share/signal-cli:rw"
+        env: "{{ signal_bridge_env }}"
+        memory: "{{ signal_bridge_memory_limit | default(omit) }}"
+        cpus: "{{ signal_bridge_cpu_limit | default(omit) }}"
+        recreate: "{{ signal_bridge_recreate | default(false) }}"
+        pull: "{{ signal_bridge_pull_image }}"
+      register: signal_bridge_container
+
+    - name: Wait for signal-bridge API to be available
+      uri:
+        url: "http://localhost:{{ signal_bridge_ports[0].split(':')[0] }}/v1/about"
+        status_code: 200
+      register: result
+      until: result.status == 200
+      retries: 30
+      delay: 2
+      when: signal_bridge_container.changed
+
+- name: Ensure signal-bridge is disabled
+  when: not signal_bridge_enabled | bool
+  block:
+    - name: Stop and remove signal-bridge container
+      docker_container:
+        name: "{{ signal_bridge_container_name }}"
+        state: absent
+    
+    - name: Optionally remove data
+      file:
+        path: "{{ signal_bridge_base_path }}"
+        state: absent
+      when: signal_bridge_remove_data_on_disable | default(false) | bool

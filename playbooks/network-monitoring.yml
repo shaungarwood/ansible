@@ -1,0 +1,7 @@
+---
+- name: Deploy Network Monitoring (WatchYourLAN)
+  hosts: greasy-gold  # mama-bear
+  become: yes
+  
+  roles:
+    - network-monitoring

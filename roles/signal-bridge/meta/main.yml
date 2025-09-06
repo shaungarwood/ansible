@@ -1,0 +1,19 @@
+---
+galaxy_info:
+  author: csw
+  description: Signal messaging bridge using signal-cli REST API
+  license: MIT
+  min_ansible_version: 2.9
+  platforms:
+    - name: Ubuntu
+      versions:
+        - focal
+        - jammy
+    - name: Debian
+      versions:
+        - bullseye
+        - bookworm
+
+dependencies:
+  - role: docker
+    when: signal_bridge_enabled | bool

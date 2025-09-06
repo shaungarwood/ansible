@@ -1,7 +1,11 @@
 ---
+# Master site playbook for all services
+# Run with: ansible-playbook site.yml --limit <host> --tags <tag>
+
 - name: Test connectivity to all servers
   hosts: all
   gather_facts: yes
+  tags: [always]
   tasks:
     - name: Ping all hosts
       ping:
@@ -9,3 +13,40 @@
     - name: Get system info
       debug:
         msg: "{{ inventory_hostname }} is running {{ ansible_distribution }} {{ ansible_distribution_version }}"
+
+- name: Configure all docker hosts
+  hosts: all
+  become: yes
+  roles:
+    - role: docker
+      tags: [docker, base]
+
+- name: Deploy services on papa-bear (overkill-1)
+  hosts: overkill-1
+  become: yes
+  roles:
+    - role: youtube-sync
+      tags: [youtube, media]
+      when: youtube_sync_enabled | default(false)
+    # Add more papa-bear roles here
+
+- name: Deploy services on mama-bear (greasy-gold)
+  hosts: greasy-gold
+  become: yes
+  roles:
+    - role: signal-bridge
+      tags: [signal, messaging]
+      when: signal_bridge_enabled | default(false)
+    - role: network-monitoring
+      tags: [monitoring, network]
+      when: network_monitoring_enabled | default(false)
+    # Add more mama-bear roles here
+
+- name: Deploy services on baby-bear (brisk-falcon)
+  hosts: brisk-falcon
+  become: yes
+  roles:
+    # Baby-bear roles will go here as we assign them
+    - role: youtube-sync
+      tags: [youtube, media]
+      when: youtube_sync_enabled | default(false)

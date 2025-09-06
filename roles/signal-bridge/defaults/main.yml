@@ -1,0 +1,35 @@
+---
+# Default variables for signal-bridge role (signal-cli REST API)
+signal_bridge_enabled: true
+signal_bridge_container_name: signal-api
+signal_bridge_image: "bbernhard/signal-cli-rest-api:latest"
+signal_bridge_restart_policy: unless-stopped
+signal_bridge_pull_image: true
+
+# Network configuration
+signal_bridge_network_mode: bridge
+signal_bridge_ports:
+  - "8080:8080"  # REST API port
+
+# Base paths - portable between servers
+signal_bridge_base_path: "{{ containers_base_path }}/signal-bridge"
+signal_bridge_data_path: "{{ signal_bridge_base_path }}/data"
+
+# Signal configuration mode
+signal_bridge_mode: "json-rpc"  # or "native" or "normal"
+signal_bridge_auto_receive: "true"
+
+# Environment variables - merge common with service-specific
+signal_bridge_env: "{{ docker_common_env | combine(signal_bridge_extra_env | default({})) }}"
+signal_bridge_extra_env:
+  MODE: "{{ signal_bridge_mode }}"
+  AUTO_RECEIVE_SCHEDULE: "0 */5 * * * *"  # Check every 5 minutes
+
+# Resource limits
+signal_bridge_memory_limit: "512M"
+signal_bridge_cpu_limit: "0.5"
+
+# Security settings
+signal_bridge_use_authentication: false
+signal_bridge_api_user: ""
+signal_bridge_api_password: ""

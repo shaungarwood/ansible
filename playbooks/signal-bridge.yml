@@ -1,0 +1,7 @@
+---
+- name: Deploy Signal Bridge (signal-cli REST API)
+  hosts: greasy-gold  # mama-bear
+  become: yes
+  
+  roles:
+    - signal-bridge

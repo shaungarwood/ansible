@@ -1,0 +1,17 @@
+---
+# YouTube Sync (TubeSync) configuration for brisk-falcon (baby-bear)
+# Example of how easy it is to deploy to a different server
+
+youtube_sync_enabled: false  # Set to true to deploy here
+
+# Storage configuration for baby-bear 
+# Has 3.6TB available, perfect for downloads
+youtube_sync_base_path: "/opt/containers/tubesync"
+
+# Could use different port if needed
+youtube_sync_ports:
+  - "4848:4848"
+
+# Resource limits for baby-bear (less powerful than papa-bear)
+youtube_sync_memory_limit: "512M"
+youtube_sync_cpu_limit: "1.0"

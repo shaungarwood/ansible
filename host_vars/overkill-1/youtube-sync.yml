@@ -1,0 +1,23 @@
+---
+# YouTube Sync (TubeSync) configuration for overkill-1 (papa-bear)
+
+youtube_sync_enabled: true
+
+# Storage configuration for papa-bear
+# Using a base path makes it easy to move between servers
+youtube_sync_base_path: "/opt/containers/tubesync"
+
+# Can override to use different storage if needed
+# youtube_sync_downloads_path: "/mnt/bulk-storage/youtube"
+
+# Port configuration
+youtube_sync_ports:
+  - "4848:4848"
+
+# Resource limits for papa-bear (has plenty of resources)
+youtube_sync_memory_limit: "1G"
+youtube_sync_cpu_limit: "2.0"
+
+# Replace the Portainer-managed container
+youtube_sync_recreate: true
+youtube_sync_backup_before_replace: false  # Set to true if you want to backup first
