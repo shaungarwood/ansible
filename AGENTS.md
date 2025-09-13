@@ -16,6 +16,12 @@ This document tracks all physical servers (agents) and their logical containers 
 - **Role**: High-performance workloads, media acquisition
 - **Status**: Active, optimal performance
 - **Storage**: Well-utilized, no immediate concerns
+- **Drives**: 
+  - OS Drive: `/` (main system)
+  - Data Drive: `/mnt/storage` (container data, downloads)
+- **NAS Access**: 
+  - nas-deck (old): TBD mount point
+  - cold-harbor (new): TBD mount point
 
 #### Running Containers:
 - **tubesync** (Port 4848) - YouTube sync service
@@ -30,6 +36,12 @@ This document tracks all physical servers (agents) and their logical containers 
 - **Role**: Media server, home services
 - **Status**: 🚨 **CRITICAL - 97% storage full**
 - **Storage**: **IMMEDIATE ACTION REQUIRED**
+- **Drives**: 
+  - OS Drive: `/` (97% full - CRITICAL!)
+  - Data Drive: TBD (secondary storage location)
+- **NAS Access**: 
+  - nas-deck (old): TBD mount point
+  - cold-harbor (new): TBD mount point
 
 #### Running Containers:
 - **watchyourlan** (Port 8840) - Network device monitoring
@@ -53,6 +65,12 @@ This document tracks all physical servers (agents) and their logical containers 
 - **Role**: Available for expansion
 - **Status**: Underutilized, 3.6TB available storage
 - **Opportunity**: Perfect for storage-heavy workloads
+- **Drives**: 
+  - OS Drive: `/` (main system)
+  - Data Drive: TBD (3.6TB available - ideal for bulk storage)
+- **NAS Access**: 
+  - nas-deck (old): TBD mount point
+  - cold-harbor (new): TBD mount point
 
 #### Running Containers:
 - **None currently** - Clean slate for new deployments

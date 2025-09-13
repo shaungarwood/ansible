@@ -1,0 +1,37 @@
+---
+# Common storage configuration for all servers
+# Define OS vs Data drive paths and NAS mount points
+
+# Base container storage path (can be overridden per host)
+containers_base_path: "/opt/containers"
+
+# Standard mount points (to be defined per host)
+storage_paths:
+  os_drive: "/"              # Main OS drive
+  data_drive: ""             # Secondary/bulk storage (define per host)
+  
+# NAS mount points (to be defined per deployment)
+nas_mounts:
+  nas_deck:                  # Old NAS
+    path: ""                 # TBD: /mnt/nas-deck or similar
+    type: "nfs"              # or smb/cifs
+    options: ""              # mount options
+  
+  cold_harbor:               # New NAS  
+    path: ""                 # TBD: /mnt/cold-harbor or similar
+    type: "nfs"              # or smb/cifs
+    options: ""              # mount options
+
+# Storage allocation strategy per service type
+service_storage:
+  # Fast I/O services (configs, databases)
+  fast_storage: "{{ containers_base_path }}"
+  
+  # Bulk storage services (downloads, media)
+  bulk_storage: "{{ storage_paths.data_drive | default(containers_base_path) }}"
+  
+  # Archive/backup storage
+  archive_storage: "{{ nas_mounts.cold_harbor.path | default(containers_base_path) }}"
+  
+  # Legacy/old data
+  legacy_storage: "{{ nas_mounts.nas_deck.path | default(containers_base_path) }}"
